@@ -1,8 +1,7 @@
 FROM python:3.9-slim-buster
 
-# Установка системных зависимостей
+# Установка системных зависимостей (без chromium-chromedriver)
 RUN apt-get update && apt-get install -y \
-    chromium-chromedriver \
     fonts-liberation \
     libappindicator3-1 \
     libasound2 \
@@ -38,6 +37,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     fonts-noto-color-emoji \
     x11-utils \
+    wget \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Настройка рабочей директории
@@ -47,6 +48,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
+
+# Загрузка и установка ChromeDriver
+RUN wget https://chromedriver.storage.googleapis.com/114.0.5735.133/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    chmod +x chromedriver && \
+    mv chromedriver /usr/local/bin/
 
 # Настройка headless режима для Chrome
 ENV CHROME_OPTIONS="--headless --disable-gpu --disable-extensions --disable-images --disable-popup-blocking --blink-settings=imagesEnabled=false"
