@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Searcher</title>
+</head>
+<body>
+    <h1>Web Searcher</h1>
+    <form id="searchForm">
+        <label for="url">Website URL:</label><br>
+        <input type="text" id="url" name="url" value="https://example.com"><br>
+        <label for="keyword">Keyword:</label><br>
+        <input type="text" id="keyword" name="keyword" value="example"><br>
+        <label for="depth">Search Depth:</label><br>
+        <input type="number" id="depth" name="depth" value="2"><br>
+        <label for="max_pages">Max Pages:</label><br>
+        <input type="number" id="max_pages" name="max_pages" value="10"><br><br>
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            const keyword = document.getElementById('keyword').value;
+            const depth = document.getElementById('depth').value;
+            const max_pages = document.getElementById('max_pages').value;
+
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url, keyword, depth, max_pages })
+            });
+
+            const results = await response.json();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            results.forEach((result, index) => {
+                resultsDiv.innerHTML += `
+                    <p>${index + 1}. Context: ${result.context}</p>
+                    <p>   Title: ${result.title}</p>
+                    <p>   Link: <a href="${result.url}" target="_blank">${result.url}</a></p>
+                    <hr>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
