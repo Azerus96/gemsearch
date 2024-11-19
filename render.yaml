@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: web-searcher
+    env: docker
+    plan: free # Или другой подходящий план
+    docker:
+      buildCommand: docker build -t web-searcher .
+      ports:
+        - port: 8080
+          protocol: tcp
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.9.13" # Или другая нужная версия Python
+      - key: CHROME_BINARY_PATH
+        value: /usr/bin/chromium-browser # Путь к бинарному файлу Chrome
